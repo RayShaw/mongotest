@@ -15,7 +15,7 @@ db.once('open', function() {
 });
 
 // 去除 DeprecationWarning mpromise 警告
-// mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;
 
 //申明一个mongoons对象 Schema 文本属性对象
 var studentSchema = mongoose.Schema({
@@ -52,14 +52,14 @@ var newStu = { no: 1, name: 'aaaa', age: '10' };
 var studentEntity = new studentModel(newStu)
 // studentEntity.speak();
 
-// add new student 基于实例entiry操作
+// add new student 基于实例entity操作
 // studentEntity.save(function(err) {
-//     if (err) return console.error(err);
+//     if (err) console.error(err);
 //     console.log('Entiry add new success.')
 //     db.close()
 // })
 
-// add 基于modul操作
+// add 基于model操作
 var newStu2 = { no: 2, name: 'bbbb', age: '20' };
 // studentModel.create(newStu2, function(err){
 //     if(err) console.error(err)
@@ -67,18 +67,59 @@ var newStu2 = { no: 2, name: 'bbbb', age: '20' };
 //     db.close()
 // });
 
-// update
-studentModel.update(condition, update, options, callback)
-var 
-var update 
+// update 基于Model操作 Model.update(condition, update, options, callback)
+var condition = { no: 1 }
+var update = { $set: { name: 'ccccc', age: 18 } }
+var options = { upsert: true }
+// studentModel.update(condition, update, options, function(err) {
+//     if (err) console.error(err)
+//     console.log('Model update success')
+//     db.close()
+// })
 
+// update 基于Entity操作 db.close()后就无法entity操作
+var _id = '58354620ccfd690c4615825a'
+// studentModel.findById(_id, function(err, student) {
+//     if(err) console.error(err) 
+//     student.name = 'uuuuu2'
+//     student.save(function(err) {
+//         if (err) console.error(err);
+//         console.log('Entiry update new success.')
+//     })
+//     db.close()
+// })
+
+
+
+// delete 基于Model操作
+var conditionDel = { no: 2 }
+// studentModel.remove(conditionDel, function(err){
+//     if(err) console.error(err)
+//     console.log('delete success')
+//     db.close()
+// })
 
 // find
 studentModel.find(function(err, students) {
     if (err) console.erroe(err)
     console.log({ students: students })
-    db.close()
+    db.close() // 加了 entity的save失效
 })
+
+
+// findbyno 基于实例方法查询
+// var stuUpdEntity = new studentModel({});
+// stuUpdEntity.findbyno(2, function(err, result) {
+//     if (err) console.error(err)
+//     console.log(result)
+// })
+
+// // findbyname 基于静态方法查询
+// studentModel.findbyname('ccccc', function(err, result) {
+//     if (err) console.error(err)
+//     console.log(result)
+// })
+
 
 // studentModel.findById('58341a8cacf92f387a5b8b07', function(err, students) {
 //     if (err) console.erroe(err)
