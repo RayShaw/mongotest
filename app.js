@@ -1,69 +1,56 @@
 var express = require('express');
 var app = express();
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
+app.get('/', function(req, res) {
+    res.send('Hello World!');
 });
 
 var mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/teststudents');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, '连接错误:'));
+db.once('open', function() {
+    //一次打开记录
+    //console.log('connect')
+});
 
-//申明一个mongoons对象
-var StudentsSchema = mongoose.Schema({
-  name: String,
-  no: Number,
-  age: Number,
-  createAt: {
-    type: Date,
-    default: Date.now()
-  }
+//申明一个mongoons对象 Schema 文本属性对象
+var StudentSchema = mongoose.Schema({
+    no: Number,
+    name: String,
+    age: Number,
+    createAt: {
+        type: Date,
+        default: Date.now()
+    }
 })
 
-
-
-//每次执行都会调用,时间更新操作
-// StudentsSchema.pre('save', function (next) {
-//   if (this.isNew) {
-//     this.meta.createAt = Date.now();
-//   } 
-
-//   next();
-// })
-
-//查询的静态方法
-StudentsSchema.statics = {
-  fetch: function (cb) { //查询所有数据
-    return this
-      .find()
-      .exec(cb) //回调
-  },
-  findById: function (id, cb) { //根据id查询单条数据
-    return this
-      .findOne({ _id: id })
-      .exec(cb)
-  }
+// 为Schema创建方法
+StudentSchema.methods.speak = function() {
+    var greeting = this.name ? "My name is " + this.name : "I don't have a name"
+    console.log(greeting)
 }
 
-var Students = mongoose.model('Students', StudentsSchema) // 编译生成Movie 模型
+// 发布一个Model数据库模型
+var StudentModel = mongoose.model('Students', StudentSchema)
 
-// Students.fetch(function (err, students) {
-//   if (err) console.log(err)
-//   console.log({ students: students })  //这里也可以json的格式直接返回数据res.json({data: users});
-// });
-
-Students.findById('58341a8cacf92f387a5b8b07', function (err, stu) {
-  if(err) console.log(err)
-  console.log({ student : stu})
-})
-
-
-
-
-// Students.find({}, function (err, students) {
-//   if (err) console.log(err);
-//   console.log(students)
+// 用Model创建Entity实体
+var studentEntity = new StudentModel({ name: 'aaaa' })
+// console.log(studentEntity.name)
+studentEntity.speak();
+// studentEntity.save(function(err, studentEntity){
+//   if(err) return console.error(err);
+//   studentEntity.speak();
 // })
 
-// var newStudent = new Students({ name: 'Silence' });
-// console.log(newStudent.name);
+
+
+StudentModel.find(function(err, students) {
+    if (err) console.erroe(err)
+    console.log({ students: students })
+})
+
+StudentModel.findById('58341a8cacf92f387a5b8b07', function(err, students) {
+    if (err) console.erroe(err)
+    console.log({ student: students })
+})
