@@ -60,7 +60,7 @@ var studentEntity = new studentModel(newStu)
 // })
 
 // add 基于model操作
-var newStu2 = { no: 2, name: 'bbbb', age: '20' };
+var newStu2 = { no: 6, name: 'bbbb', age: '20' };
 // studentModel.create(newStu2, function(err){
 //     if(err) console.error(err)
 //     console.log('Model add new success.')
@@ -69,7 +69,7 @@ var newStu2 = { no: 2, name: 'bbbb', age: '20' };
 
 // update 基于Model操作 Model.update(condition, update, options, callback)
 var condition = { no: 1 }
-var update = { $set: { name: 'ccccc', age: 18 } }
+var update = { $set: { name: 'vvvvv', age: 18 } }
 var options = { upsert: true }
 // studentModel.update(condition, update, options, function(err) {
 //     if (err) console.error(err)
