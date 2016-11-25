@@ -32,47 +32,87 @@ var studentSchema = mongoose.Schema({
 var studentModel = mongoose.model('studentModel', studentSchema, 'stu2')
 
 
-// add 100 records
+// new 100 records
+let newStuArr = [];
+for (let i = 0; i < 100; i++) {
+  let newStu = {
+    no: i,
+    name: 'wocao' + i,
+    age: parseInt(Math.random() * 100)
+  }
+  newStuArr.push(newStu)
+}
 
-// var newStuArr = [];
-// for (let i = 0; i < 100; i++) {
-//   let newStu = {
-//     no: i,
-//     name: 'wocao' + i,
-//     age: parseInt(Math.random() * 100)
-//   }
-//   newStuArr.push(newStu)
-// }
-// studentModel.create(newStuArr, function (err) {
-//   if (err) console.error(err)
-//   console.log('Model add new success.')
-//   db.close()
-// });
+// add
+studentModel.create(newStuArr, function (err) {
+  if (err) console.error(err)
+  console.log('Model add new success.')
 
+  // delete no. is even records
+  studentModel.find({}, { no: 1, _id: 1 }, null, function (err, students) {
+    if (err) console.erroe(err)
+    let deleteStu = []
+    for (let stu of students) {
+      if (stu.no % 2 == 0) {
+        deleteStu.push(stu._id)
+      }
+    }
+    studentModel.remove({ _id: { $in: deleteStu } }, function (err, results) {
+      if (err) console.log(err);
+      console.log('Model delete success.')
+
+      // update sex filed  no < 20 female
+      studentModel.update({ no: { $lt: 20 } }, { sex: 'female' }, { multi: true }, function (err) {
+        if (err) console.error(err)
+        console.log('Model update success.')
+
+        // find distinct 
+        studentModel.distinct("age", { age: { $gt: 70 } }, function (err, studentsAge) {
+          if (err) console.erroe(err)
+          console.log({ studentsAge: studentsAge })
+          db.close() 
+        })
+
+        //find
+        studentModel.find({ no: { $lte: 10 } }, { no: 1, sex: 1 }, function (err, results) {
+          if (err) console.error(err)
+          console.log(results)
+          db.close();
+        })
+      })
+
+
+    });
+  })
+
+
+
+})
+
+// studentModel.find({ no: { $lte: 10 } }, { _id: 1, no: 1 }, function (err, results) {
+//     if (err) console.error(err)
+//     console.log(results)
+//   })
 
 // delete no. is even records
 // studentModel.find({}, { no: 1, _id: 1 }, null, function (err, students) {
 //   if (err) console.erroe(err)
-//   let ids = []
+//   let deleteStu = []
 //   for(let stu of students){
 //     if (stu.no % 2 == 0){
-//         ids.push(stu._id)
+//         deleteStu.push(stu._id)
 //     }
 //   }
 
-
-//   // console.log(ids)
-
-
-//   studentModel.remove({_id: {$in: ids}}, function(err, results) {
-//     console.log(err);
+//   studentModel.remove({_id: {$in: deleteStu}}, function(err, results) {
+//     if(err) console.log(err);
 
 //   });
 //   db.close()
 // })
 
 
-// add age filed 50 > no > 20 male, no < 20 female
+// add sex filed 50 > no > 20 male, no < 20 female
 // var condition = { no: { $gte: 20, $lte: 50 } }
 // var update = { $set: { sex: 'male' } }
 // var options = { multi: true }
@@ -92,11 +132,11 @@ var studentModel = mongoose.model('studentModel', studentSchema, 'stu2')
 // })
 
 // find distinct 
-studentModel.distinct("age", { age: { $gt: 70 } }, function (err, studentsAge) {
-  if (err) console.erroe(err)
-  console.log({ studentsAge: studentsAge })
-  db.close() // 加了 entity的save失效
-})
+// studentModel.distinct("age", { age: { $gt: 70 } }, function (err, studentsAge) {
+//   if (err) console.erroe(err)
+//   console.log({ studentsAge: studentsAge })
+//   db.close() // 加了 entity的save失效
+// })
 
 
 
