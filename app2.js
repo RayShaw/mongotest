@@ -70,7 +70,7 @@ studentModel.create(newStuArr, function (err) {
         studentModel.distinct("age", { age: { $gt: 70 } }, function (err, studentsAge) {
           if (err) console.erroe(err)
           console.log({ studentsAge: studentsAge })
-          db.close() 
+          db.close()
         })
 
         //find
